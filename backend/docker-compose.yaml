@@ -1,0 +1,24 @@
+x-golang-env: &golang-env
+  - development.env
+
+x-golang-port: &golang-port
+  - "8080:8000"
+
+x-robot-net: &robot-net
+  - robotnet
+
+version: '3.8'
+services:
+  backend-robot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: golang
+    restart: always
+    env_file: *golang-env
+    ports: *golang-port
+    command: sh -c "./main"
+    networks: *robot-net
+
+networks: 
+  robotnet:
