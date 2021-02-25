@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/dnguyenngoc/robot/service/routes"
 	"github.com/dnguyenngoc/robot/service/settings"
-	"github.com/dnguyenngoc/robot/service/database"
+	// "github.com/dnguyenngoc/robot/service/database"
 	"github.com/dnguyenngoc/robot/service/docs" 
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 	swaggerFiles "github.com/swaggo/files" // swagger embed files
@@ -33,7 +33,7 @@ func init() {
 	settings.ViperReadEnvPath("./settings", "variable.yaml", "yaml")
 
 	// initial db
-	database.DBinstance()
+	// database.DBinstance()
 
 	// log.Println("Load all env to conf structure")
 
@@ -42,7 +42,7 @@ func init() {
 func main() {
 
 	// load config
-	conf := settings.GetEnv()
+	conf := settings.Env
 
 	// load router config
 	router := routes.SetupRoutes()

@@ -37,3 +37,5 @@ func GetEnv() *Config {
 	}
 	return configuration
 }
+
+var Env *Config = GetEnv()
