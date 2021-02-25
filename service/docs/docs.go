@@ -25,8 +25,7 @@ var doc = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/api/v1/accounts/login/access-token": {
-            "get": {
-                "description": "login get access-token",
+            "post": {
                 "consumes": [
                     "application/json"
                 ],
@@ -35,6 +34,18 @@ var doc = `{
                 ],
                 "tags": [
                     "accounts"
+                ],
+                "summary": "Login get token by user/pass",
+                "parameters": [
+                    {
+                        "description": "Login by User/Pass",
+                        "name": "account",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LoginAccessTokenParam"
+                        }
+                    }
                 ],
                 "responses": {
                     "200": {
@@ -115,6 +126,18 @@ var doc = `{
                 "fresh_token": {
                     "type": "string",
                     "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ"
+                }
+            }
+        },
+        "models.LoginAccessTokenParam": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "example": "@1q2w3e4r"
+                },
+                "user_name": {
+                    "type": "string"
                 }
             }
         }

@@ -35,14 +35,28 @@ definitions:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
         type: string
     type: object
+  models.LoginAccessTokenParam:
+    properties:
+      password:
+        example: '@1q2w3e4r'
+        type: string
+      user_name:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
   /api/v1/accounts/login/access-token:
-    get:
+    post:
       consumes:
       - application/json
-      description: login get access-token
+      parameters:
+      - description: Login by User/Pass
+        in: body
+        name: account
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginAccessTokenParam'
       produces:
       - application/json
       responses:
@@ -62,6 +76,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/exceptions.InternalServerError'
+      summary: Login get token by user/pass
       tags:
       - accounts
 swagger: "2.0"

@@ -2,6 +2,7 @@
 package routes
 
 import (
+
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -18,7 +19,7 @@ func SetupRoutes() *gin.Engine {
 	control := controllers.NewController()
 
 	// load template
-	router.LoadHTMLGlob("template/*")
+	router.LoadHTMLGlob("templates/*")
 
 	router.GET("/", func(c *gin.Context) {
 		// Call the HTML method of the Context to render a template
@@ -35,17 +36,22 @@ func SetupRoutes() *gin.Engine {
 	})
 
 	// Routes to v1
-	api := router.Group("api")
-	v1 := api.Group("v1")
-
-	// Routes account
-	account := v1.Group("accounts")
-	account.POST("/login/access-token", control.LoginAccessToken)
-	account.POST("/login/refresh-token", control.LoginAccessToken)
-	account.POST("/logout", control.LoginAccessToken)
-	account.POST("/new", control.LoginAccessToken)
-	account.PUT("/profile", control.LoginAccessToken)
-	account.DELETE("", control.LoginAccessToken)
-
+	api := router.Group("api"); 
+	{
+		v1 := api.Group("v1"); 
+		{
+			// Routes account
+			account := v1.Group("accounts"); 
+			{
+				account.POST("/login/access-token", control.LoginAccessToken)
+				account.POST("/login/refresh-token", control.LoginFreshToken)
+				account.POST("/logout", control.Logout)
+				account.POST("/new", control.CreateAccount)
+				account.PUT("/profile", control.UpdateProfile)
+				account.DELETE("", control.DeleteAccount)
+			}	
+		}
+	}
+	
 	return router
 }
