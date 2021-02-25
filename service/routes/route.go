@@ -10,6 +10,7 @@ import (
 	"github.com/dnguyenngoc/robot/service/controllers"
 
 )
+
 func SetupRoutes() *gin.Engine {
 
 	// Define router

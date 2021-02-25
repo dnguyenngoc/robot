@@ -1,21 +1,9 @@
-package config
+package settings
 
 import (
 	"fmt"
-
 	"github.com/spf13/viper"
-
 )
-
-func GetEnv() Config {
-	viper.SetConfigName("final_env.json")
-	viper.AddConfigPath(".")
-	viper.AutomaticEnv()
-	viper.SetConfigType("json")
-	var configuration Config
-	viper.Unmarshal(&configuration)
-	return configuration
-}
 
 func ViperReadEnvPath(path string, fileName string, fileType string) {
 	// Set the file name of the configurations file
@@ -42,6 +30,3 @@ func ViperReadEnvPath(path string, fileName string, fileType string) {
 	}
 	viper.WriteConfigAs("./final_env.json")
 }
-
-
-
