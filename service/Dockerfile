@@ -43,3 +43,8 @@ RUN go build -o main
 # COPY --from=builder $GOPATH/src/template/ $GOPATH/src/template/
 
 # EXPOSE 8000
+
+
+go mod init duynguyenngoc/robot
+
+go get -u github.com/gin-gonic/gin

@@ -3,31 +3,26 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 
-	"app/config"
-
-	"app/routes"
+	"github.com/dnguyenngoc/robot/service/routes"
 
 	"log"
 
 	"strconv"
 )
 
-func init() {
-
-	// Load env like config.Variable for all system can call it (-.0)!!
-	config.ViperReadEnvPath(".", "config.yaml", "yaml")
-
-}
+// func init() {
+// 	config.ViperReadEnvPath(".", "config.yaml", "yaml")
+// }
 
 func main() {
 
-	env := config.GetEnv()
+	log.Println("Starting server...")
 
 	gin.SetMode(gin.ReleaseMode)
 
 	router := routes.SetupRoutes()
 
-	port := env.Server.Port
+	port := "8080"
 
 	log.Println("Server starting on port: ", port)
 
