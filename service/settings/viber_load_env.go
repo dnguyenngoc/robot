@@ -30,6 +30,7 @@ func ViperReadEnvPath(path string, fileName string, fileType string) {
 	// Set config file type (ex: yml)
 	viper.SetConfigType(fileType)
 
+	// Handle read config failed
 	if err := viper.ReadInConfig(); err != nil {
 		fmt.Printf("Error reading config file, %s", err)
 	}

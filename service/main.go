@@ -5,14 +5,14 @@ import (
 
 	"github.com/dnguyenngoc/robot/service/routes"
 
-	"github.com/dnguyenngoc/robot/service/config"
+	"github.com/dnguyenngoc/robot/service/settings"
 
 	"log"
 
 )
 
 func init() {
-	config.ViperReadEnvPath(".", "config.yaml", "yaml")
+	config.ViperReadEnvPath("./settings", "variable.yaml", "yaml")
 }
 
 func main() {

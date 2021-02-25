@@ -1,3 +1,4 @@
+
 package routes
 
 import (
@@ -5,12 +6,20 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-)
+	"github.com/swaggo/gin-swagger" // gin-swagger middleware
 
+	"github.com/swaggo/files" // swagger embed files
+
+	"github.com/dnguyenngoc/robot/service/controllers"	
+
+)
 func SetupRoutes() *gin.Engine {
 
 	// Define router
 	router := gin.Default()
+
+	// Define controller
+	ctl := controllers.NewController()
 
 	// load template
 	router.LoadHTMLGlob("template/*")
@@ -29,16 +38,18 @@ func SetupRoutes() *gin.Engine {
 		)
 	})
 
-	// // Routes to api
-	// api := router.Group("/api")
+	// Routes to api
+	api := router.Group("api")
 
-	// // Routes to v1
-	// v1 := api.Group("v1")
+	// Routes to v1
+	v1 := api.Group("v1")
 
-	// // Routes account
-	// account := v1.Group("account") {
-	// 	account.POST("/login/token", controllers.LoginAccessToken)
-	// }
+	// Routes account
+	account := v1.Group("accounts")
+
+	account.GET("/login/access-token", ctl.LoginAccessToken)
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	return router
 }
