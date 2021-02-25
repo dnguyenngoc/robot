@@ -5,14 +5,15 @@ import (
 
 	"github.com/dnguyenngoc/robot/service/routes"
 
+	"github.com/dnguyenngoc/robot/service/config"
+
 	"log"
 
-	"strconv"
 )
 
-// func init() {
-// 	config.ViperReadEnvPath(".", "config.yaml", "yaml")
-// }
+func init() {
+	config.ViperReadEnvPath(".", "config.yaml", "yaml")
+}
 
 func main() {
 
@@ -26,7 +27,7 @@ func main() {
 
 	log.Println("Server starting on port: ", port)
 
-	if err := router.Run(":" + strconv(port)); err != nil {
+	if err := router.Run(":" + port); err != nil {
 		log.Panicf("error: %s", err)
 	}
 
