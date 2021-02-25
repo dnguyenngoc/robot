@@ -1,4 +1,67 @@
+definitions:
+  exceptions.BadRequest:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: status bad request
+        type: string
+    type: object
+  exceptions.InternalServerError:
+    properties:
+      code:
+        example: 500
+        type: integer
+      message:
+        example: status internal server error
+        type: string
+    type: object
+  exceptions.NotFound:
+    properties:
+      code:
+        example: 404
+        type: integer
+      message:
+        example: status not found
+        type: string
+    type: object
+  models.LoginAccessToken:
+    properties:
+      access_token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+        type: string
+      fresh_token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+        type: string
+    type: object
 info:
   contact: {}
-paths: {}
+paths:
+  /api/v1/accounts/login/access-token:
+    get:
+      consumes:
+      - application/json
+      description: login get access-token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.LoginAccessToken'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/exceptions.BadRequest'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/exceptions.NotFound'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/exceptions.InternalServerError'
+      tags:
+      - accounts
 swagger: "2.0"
