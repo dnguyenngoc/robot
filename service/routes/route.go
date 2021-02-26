@@ -1,17 +1,22 @@
+/* 
+	@Author: Duy Nguyen
+	@Email: <duynguyenngoc@hotmail.com>
+*/
 
 package routes
 
 import (
-
 	"net/http"
-
 	"github.com/gin-gonic/gin"
-
 	"github.com/dnguyenngoc/robot/service/controllers"
-
 )
 
+
 func SetupRoutes() *gin.Engine {
+	/*
+        Setup Router for this system. 
+		Include router (using gin.Default() it mean using enable middleware)
+    */
 
 	// Define router
 	router := gin.Default()
