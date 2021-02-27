@@ -1,37 +1,45 @@
+/* 
+	@Author: Duy Nguyen
+	@Email: <duynguyenngoc@hotmail.com>
+*/
+
 package auth
 
 import (
-
-	"errors"
 	"net/http"
 	"github.com/gin-gonic/gin"
-	"github.com/dnguyenngoc/robot/service/exceptions"
+	"fmt"
+	helper "github.com/dnguyenngoc/robot/service/utils"
+	"strings"
+
 )
 
 
 func Authentication() gin.HandlerFunc {
+	/*
+		Handle jwt token with status: Unauthorized, authorized and expire
+	*/
 	return func(c *gin.Context) {
-		clientToken := c.Request.Header.Get("token")
-		if clientToken == "" {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("No Authorization header provided")})
+		clientToken := c.Request.Header.Get("Authorization")
+		if strings.HasPrefix(clientToken, "Bearer ") == false {
+			c.JSON(http.StatusUnauthorized, gin.H{"message": fmt.Sprintf("Authorization needed start with Bearer")})
 			c.Abort()
 			return
-		}
+		} else {
+			splitToken := strings.Split(clientToken, "Bearer ")
+			claims, err := helper.ValidateToken(splitToken[1])
+			if err != "" {
+				c.JSON(http.StatusUnauthorized, gin.H{"message": err})
+				c.Abort()
+				return
+			}
+			c.Set("email", claims.Email)
+			c.Set("first_name", claims.First_name)
+			c.Set("last_name", claims.Last_name)
+			c.Set("uid", claims.Uid)
+			c.Set("user_type", claims.User_type)
 
-		claims, err := helper.ValidateToken(clientToken)
-		if err != "" {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
-			c.Abort()
-			return
-		}
-
-		c.Set("email", claims.Email)
-		c.Set("first_name", claims.First_name)
-		c.Set("last_name", claims.Last_name)
-		c.Set("uid", claims.Uid)
-		c.Set("user_type", claims.User_type)
-
-		c.Next()
-
+			c.Next()
+		}		
 	}
 }

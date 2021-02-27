@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"github.com/dnguyenngoc/robot/service/controllers"
+	"github.com/dnguyenngoc/robot/service/auth"
+
 )
 
 
@@ -44,7 +46,7 @@ func SetupRoutes() *gin.Engine {
 	// Routes to v1
 	api := router.Group("api"); 
 	{
-		test := api.Group("test");
+		test := api.Group("test").Use(auth.Authentication());
 		{
 			test.GET("", control.TestApi)
 		}
