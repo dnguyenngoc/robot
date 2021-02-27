@@ -44,6 +44,10 @@ func SetupRoutes() *gin.Engine {
 	// Routes to v1
 	api := router.Group("api"); 
 	{
+		test := api.Group("test");
+		{
+			test.GET("", control.TestApi)
+		}
 		v1 := api.Group("v1"); 
 		{
 			// Routes account
