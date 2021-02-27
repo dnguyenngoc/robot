@@ -59,7 +59,8 @@ func SetupRoutes() *gin.Engine {
 				account.POST("/login/refresh-token", control.LoginFreshToken)
 				account.POST("/logout", control.Logout)
 				account.POST("/new", control.CreateAccount)
-				account.PUT("/profile", control.UpdateProfile)
+				account.PUT("/profile", control.UpdateProfile).Use(auth.Authentication())
+				account.GET("/profile", control.GetProfile).Use(auth.Authentication())
 				account.DELETE("", control.DeleteAccount)
 				account.POST("/signup", control.SignUp)
 			}	

@@ -29,9 +29,8 @@ var validate = validator.New()
 // @Param  account body models.UserSignUp true
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} models.UserCreate
+// @Success 200 {object} models.Token
 // @Failure 400 {object} exceptions.BadRequest
-// @Failure 404 {object} exceptions.NotFound
 // @Failure 500 {object} exceptions.InternalServerError
 // @Router /api/v1/accounts/login/access-token [post]
 func (ctl *Controller) SignUp(c *gin.Context) {
@@ -98,10 +97,10 @@ func (ctl *Controller) SignUp(c *gin.Context) {
 // Login AccessToken
 // @Summary Login get token by user/pass
 // @Tags accounts
-// @Param  account body models.LoginAccessTokenParam true "Login by User/Pass" 
+// @Param  account body models.UserLogin true "Login by User/Pass" 
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} models.LoginAccessToken
+// @Success 200 {object} models.Token
 // @Failure 400 {object} exceptions.BadRequest
 // @Failure 404 {object} exceptions.NotFound
 // @Failure 500 {object} exceptions.InternalServerError
@@ -150,6 +149,25 @@ func (ctl *Controller) LoginAccessToken(c *gin.Context){
 	return
 }
 
+func (ctl *Controller) GetProfile(c *gin.Context){
+	// verify json param
+	uid := c.GetString("uid")
+	c.JSON(http.StatusOK, uid)
+	return
+}
+
+
+func (ctl *Controller) UpdateProfile(c *gin.Context){
+	// verify json param
+	var user *models.SignedDetails
+	if err := c.BindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+}
+
+
+
 
 func (ctl *Controller) LoginFreshToken(c *gin.Context){
 	c.JSON(200, gin.H{
@@ -164,12 +182,6 @@ func (ctl *Controller) Logout(c *gin.Context){
 }
 
 func (ctl *Controller) CreateAccount(c *gin.Context){
-	c.JSON(200, gin.H{
-		"not": "now",
-	})
-}
-
-func (ctl *Controller) UpdateProfile(c *gin.Context){
 	c.JSON(200, gin.H{
 		"not": "now",
 	})
