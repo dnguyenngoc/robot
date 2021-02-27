@@ -9,7 +9,6 @@ WORKDIR /go/src/app
 
 # Get Reflex for live reload in dev
 ENV GO111MODULE=on
-RUN go get github.com/cespare/reflex
 
 # The latest alpine images don't have some tools like (`git` and `bash`).
 # Adding git, bash and openssh to the image

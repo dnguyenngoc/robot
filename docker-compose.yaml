@@ -1,5 +1,5 @@
 x-golang-env: &golang-env
-  - development.env
+  - backend.env
 
 x-golang-port: &golang-port
   - "8080:8000"
