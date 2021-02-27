@@ -9,30 +9,24 @@ import (
 	"context"
 	"time"
 	"log"
-	"fmt"
-	"strconv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
-	"github.com/dnguyenngoc/robot/service/settings"
 )
 
 const (
-	connectTimeout = 10
-	connectionStringTemplate = "mongodb://%s:%s@%s:%s/%s" 
+	connectTimeout = 60
+	connectionStringTemplate = "mongodb://%s:%s@%s:%s/%s"
 )
+
+var Client *mongo.Client = DBinstance()
 
 func DBinstance() *mongo.Client  {
 	/*
 		Function for handle connect to mongodb with time out (10s) and make sure disable connect to db when occur incident
 	*/
 
-	conf := settings.GetEnv()
-	
-	mongoURI:= fmt.Sprintf(
-		connectionStringTemplate, conf.Database.User, conf.Database.Pass, conf.Database.Host, 
-		strconv.Itoa(conf.Database.Port), conf.Database.Database,
-	)
+	mongoURI := "mongodb://robot:1q2w3e4r@127.0.0.1:27017/robot"
 
 	ctx, cancel := context.WithTimeout(context.Background(), connectTimeout*time.Second)
 
@@ -42,7 +36,6 @@ func DBinstance() *mongo.Client  {
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoURI))
 	if err != nil {
 		log.Fatalf("Error while connecting to mongo: %v\n", err)
-		log.Fatal(err)
 	}
 
 	// handle disconnect db
@@ -60,7 +53,12 @@ func DBinstance() *mongo.Client  {
 	return client
 }
 
-var Client *mongo.Client = DBinstance()
 
+//OpenCollection is a  function makes a connection with a collection in the database
+func OpenCollection(client *mongo.Client, collectionName string) *mongo.Collection {
+	
+    var collection *mongo.Collection = client.Database("robot").Collection(collectionName)
 
+    return collection
+}
 

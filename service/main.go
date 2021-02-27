@@ -11,14 +11,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/dnguyenngoc/robot/service/routes"
 	"github.com/dnguyenngoc/robot/service/settings"
-	"github.com/dnguyenngoc/robot/service/database"
 	"github.com/dnguyenngoc/robot/service/docs" 
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 	swaggerFiles "github.com/swaggo/files" // swagger embed files
+	_ "github.com/dnguyenngoc/robot/service/database"
 )
 
-
-func init() {
+func init(){
 	/*
         Loading all component for service include gin, mongodb, router api, swagger, ...
     */
@@ -39,32 +38,31 @@ func init() {
 	log.Println("API Documentation at /swagger/index.html")
 
 	// make config file
-	settings.InitialViperWriteCofig("./settings", "variable.yaml", "yaml")
-	log.Println("Create final variable: Complete!")
-
-	// initial db
-	database.DBinstance()
-	log.Println("Connected and pinged mongodb: Successfully!")
+	settings.InitialViperWriteCofig("./settings", "development.yaml", "yaml")
+	log.Println("Load environment variable: Good!")		
 
 }
 
 func main() {
-
-	// load config
-	conf := settings.GetEnv()
-	log.Println("Load environment variable: Good!")
-
+	/*
+        Loading all component for service include gin, mongodb, router api, swagger, ...
+    */
+	
 	// load router config
 	router := routes.SetupRoutes()
 	log.Println("Setup Routes: Completed!")
 
 	// load swaggger
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	log.Println("Server starting on port: ", conf.Server.Port)
+	log.Println("Server starting on port: ", settings.Env.Server.Port)
 
 	// run service
-	if err := router.Run(":" + strconv.Itoa(conf.Server.Port)); err != nil {
+	if err := router.Run(":" + strconv.Itoa(settings.Env.Server.Port)); err != nil {
 		log.Panicf("error: %s", err)
 	}
+
+	// // connect db ping
+	// database.DBinstance()
+	// log.Println("Connected and pinged mongodb: Successfully!")
 
 }

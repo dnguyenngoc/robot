@@ -1,6 +1,7 @@
 project:
   name: "robot"
   environment: "development"
+  secret_key: "fake_secrect"
 
 server:
   host: "localhost"
@@ -11,5 +12,5 @@ database:
   pass: "1q2w3e4r"
   host: "127.0.0.1"
   port: 27017
-  database: "robot"
+  name: "robot"
   type: "mongdb"
