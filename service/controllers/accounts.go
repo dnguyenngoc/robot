@@ -2,13 +2,26 @@
 package controllers
 
 import (
-	// "context"
+	"time"
+	"context"
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"github.com/dnguyenngoc/robot/service/models"
+	"github.com/dnguyenngoc/robot/service/database"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	helper "github.com/dnguyenngoc/robot/service/utils"
+	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/go-playground/validator/v10"
 )
+
+const (
+	connectTimeout = 100
+)
+
+var userCollection *mongo.Collection = database.OpenCollection(database.Client, "users")
+var validate = validator.New()
+
 
 // Sign up User
 // @Summary Login get token by user/pass
@@ -23,37 +36,56 @@ import (
 // @Router /api/v1/accounts/login/access-token [post]
 func (ctl *Controller) SignUp(c *gin.Context) {
 
-	// limit time request to api
-	// var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-	
 	// verify json param
 	var user models.UserCreate
 	if err := c.BindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
+	
+	// validationErr
+	validationErr := validate.Struct(user)
+	if validationErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": validationErr.Error()})
+		return
+	}
+
+	// limit time request to api attack db
+	var ctx, cancel = context.WithTimeout(context.Background(), connectTimeout*time.Second)
 
 	// verify existed or not
-
-
-	// make Time
-	user.CreatedAt = helper.NowUtcTime()
-	user.UpdatedAt = helper.NowUtcTime()
+	count, err := userCollection.CountDocuments(ctx, bson.M{"email": user.Email})
+	defer cancel()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "error occured while checking for the email"})
+		return
+	}
+	if count > 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "this email or phone number already exists"})
+		return
+	}
 	
 	// make userDb
 	var userDb models.UserDB
-	userDb.UserCreate = user
-	userDb.ID = primitive.NewObjectID()
-	userDb.UserId = userDb.ID.Hex()
+	userDb.First_name 			= user.First_name
+	userDb.Last_name 			= user.Last_name
+	userDb.Email 				= user.Email
+	userDb.Password 			= helper.HashPassword(user.Password)
+	userDb.Phone 				= user.Phone
+	userDb.Created_at 			= helper.NowUtcTime()
+	userDb.Updated_at 			= helper.NowUtcTime()
+	userDb.ID 					= primitive.NewObjectID()
+	userDb.User_id 				= userDb.ID.Hex()
 
 	// handle insert to db
-	// resultInsertionNumber, insertErr := userCollection.InsertOne(ctx, user)
-	// if insertErr != nil {
-	// 		c.JSON(http.StatusInternalServerError, gin.H{"message": insertErr.Error()})
-	// }	
-
+	_, insertErr := userCollection.InsertOne(ctx, userDb)
+	defer cancel()
+	if insertErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": insertErr.Error()})
+		return
+	}
 	// return Token
-	token, err := helper.JwtGenerateToken(*userDb.Email, *userDb.FirstName, *userDb.LastName, userDb.UserId)
+	token, err := helper.JwtGenerateToken(userDb.Email, userDb.First_name, userDb.Last_name, userDb.User_id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError , gin.H{"message": err.Error()})
 		return
@@ -75,41 +107,41 @@ func (ctl *Controller) SignUp(c *gin.Context) {
 // @Failure 500 {object} exceptions.InternalServerError
 // @Router /api/v1/accounts/login/access-token [post]
 func (ctl *Controller) LoginAccessToken(c *gin.Context){
-
-	// var userRepository = repositories.userRepository()
-
-	// limit time request to api attack db
-	// var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 	
 	// verify json param
-	var user models.UserCreate
+	var user models.UserLogin
 	if err := c.BindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
+	// validationErr
+	validationErr := validate.Struct(user)
+	if validationErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": validationErr.Error()})
+		return
+	}
+
+	// limit time request to api attack db
+	var ctx, cancel = context.WithTimeout(context.Background(), connectTimeout*time.Second)
+
 	// verify existed or not
+	var foundUser models.UserDB
+	err := userCollection.FindOne(ctx, bson.M{"email": user.Email}).Decode(&foundUser)
+	defer cancel()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "login or passowrd is incorrect"})
+		return
+	}
 
-	// defer cancel()
-
-	// make Time
-	user.CreatedAt = helper.NowUtcTime()
-	user.UpdatedAt = helper.NowUtcTime()
-	
-	// make userDb
-	var userDb models.UserDB
-	userDb.UserCreate = user
-	userDb.ID = primitive.NewObjectID()
-	userDb.UserId = userDb.ID.Hex()
-
-	// handle insert to db
-	// resultInsertionNumber, insertErr := userCollection.InsertOne(ctx, user)
-	// if insertErr != nil {
-	// 		c.JSON(http.StatusInternalServerError, gin.H{"message": insertErr.Error()})
-	// }	
+	// verify pass
+	if helper.VerifyPassword(user.Password, foundUser.Password) != true {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "password not match"})
+		return
+	}
 
 	// return Token
-	token, err := helper.JwtGenerateToken(*userDb.Email, *userDb.FirstName, *userDb.LastName, userDb.UserId)
+	token, err := helper.JwtGenerateToken(foundUser.Email, foundUser.First_name, foundUser.Last_name, foundUser.User_id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError , gin.H{"message": err.Error()})
 		return
@@ -119,20 +151,10 @@ func (ctl *Controller) LoginAccessToken(c *gin.Context){
 }
 
 
-
-
-
-
-
-
-
-
-
 func (ctl *Controller) LoginFreshToken(c *gin.Context){
 	c.JSON(200, gin.H{
-        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ",
-		"refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ",
-    })
+		"not": "now",
+	})
 }
 
 func (ctl *Controller) Logout(c *gin.Context){

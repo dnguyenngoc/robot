@@ -17,6 +17,8 @@ import (
 const (
 	connectTimeout = 60
 	connectionStringTemplate = "mongodb://%s:%s@%s:%s/%s"
+	mongoURI = "mongodb://robot:1q2w3e4r@127.0.0.1:27017/robot" // need handle prod env
+	databaseName = "robot" // need handle prod env
 )
 
 var Client *mongo.Client = DBinstance()
@@ -26,24 +28,20 @@ func DBinstance() *mongo.Client  {
 		Function for handle connect to mongodb with time out (10s) and make sure disable connect to db when occur incident
 	*/
 
-	mongoURI := "mongodb://robot:1q2w3e4r@127.0.0.1:27017/robot"
+	client, err := mongo.NewClient(options.Client().ApplyURI(mongoURI))
+    if err != nil {
+        log.Fatal(err)
+    }
 
 	ctx, cancel := context.WithTimeout(context.Background(), connectTimeout*time.Second)
 
 	defer cancel()
 
 	// connect db with time out
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoURI))
+	err = client.Connect(ctx)
 	if err != nil {
 		log.Fatalf("Error while connecting to mongo: %v\n", err)
 	}
-
-	// handle disconnect db
-	defer func() {
-		if err = client.Disconnect(ctx); err != nil {
-			panic(err)
-		}
-	}()
 
 	// Ping database
 	if err := client.Ping(ctx, readpref.Primary()); err != nil {
