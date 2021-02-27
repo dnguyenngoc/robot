@@ -14,7 +14,7 @@ import (
 	"github.com/dnguyenngoc/robot/service/docs" 
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 	swaggerFiles "github.com/swaggo/files" // swagger embed files
-	_ "github.com/dnguyenngoc/robot/service/database"
+	"github.com/dnguyenngoc/robot/service/database"
 )
 
 func init(){
@@ -41,6 +41,9 @@ func init(){
 	settings.InitialViperWriteCofig("./settings", "development.yaml", "yaml")
 	log.Println("Load environment variable: Good!")		
 
+	// connect db ping
+	database.DBinstance()
+	log.Println("Connected and pinged mongodb: Successfully!")
 }
 
 func main() {
@@ -61,8 +64,6 @@ func main() {
 		log.Panicf("error: %s", err)
 	}
 
-	// // connect db ping
-	// database.DBinstance()
-	// log.Println("Connected and pinged mongodb: Successfully!")
+
 
 }

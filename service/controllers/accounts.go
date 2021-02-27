@@ -47,10 +47,10 @@ func (ctl *Controller) SignUp(c *gin.Context) {
 	userDb.UserId = userDb.ID.Hex()
 
 	// handle insert to db
-	resultInsertionNumber, insertErr := userCollection.InsertOne(ctx, user)
-	if insertErr != nil {
-			c.JSON(http.StatusInternalServer, gin.H{"message": insertErr.Error()})
-	}	
+	// resultInsertionNumber, insertErr := userCollection.InsertOne(ctx, user)
+	// if insertErr != nil {
+	// 		c.JSON(http.StatusInternalServerError, gin.H{"message": insertErr.Error()})
+	// }	
 
 	// return Token
 	token, err := helper.JwtGenerateToken(*userDb.Email, *userDb.FirstName, *userDb.LastName, userDb.UserId)
@@ -75,10 +75,47 @@ func (ctl *Controller) SignUp(c *gin.Context) {
 // @Failure 500 {object} exceptions.InternalServerError
 // @Router /api/v1/accounts/login/access-token [post]
 func (ctl *Controller) LoginAccessToken(c *gin.Context){
-	c.JSON(200, gin.H{
-        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ",
-		"refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ",
-    })
+
+	// var userRepository = repositories.userRepository()
+
+	// limit time request to api attack db
+	// var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+	
+	// verify json param
+	var user models.UserCreate
+	if err := c.BindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	// verify existed or not
+
+	// defer cancel()
+
+	// make Time
+	user.CreatedAt = helper.NowUtcTime()
+	user.UpdatedAt = helper.NowUtcTime()
+	
+	// make userDb
+	var userDb models.UserDB
+	userDb.UserCreate = user
+	userDb.ID = primitive.NewObjectID()
+	userDb.UserId = userDb.ID.Hex()
+
+	// handle insert to db
+	// resultInsertionNumber, insertErr := userCollection.InsertOne(ctx, user)
+	// if insertErr != nil {
+	// 		c.JSON(http.StatusInternalServerError, gin.H{"message": insertErr.Error()})
+	// }	
+
+	// return Token
+	token, err := helper.JwtGenerateToken(*userDb.Email, *userDb.FirstName, *userDb.LastName, userDb.UserId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError , gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, token)
+	return
 }
 
 

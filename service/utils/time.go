@@ -1,0 +1,17 @@
+/* 
+	@Author: Duy Nguyen
+	@Email: <duynguyenngoc@hotmail.com>
+*/
+
+package utils
+
+import (
+    "time"
+)
+
+
+func  NowUtcTime() time.Time {
+	loc, _ := time.LoadLocation("UTC")
+    now := time.Now().In(loc)
+	return now
+}

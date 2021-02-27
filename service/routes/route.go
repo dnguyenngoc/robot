@@ -59,6 +59,7 @@ func SetupRoutes() *gin.Engine {
 				account.POST("/new", control.CreateAccount)
 				account.PUT("/profile", control.UpdateProfile)
 				account.DELETE("", control.DeleteAccount)
+				account.POST("/signup", control.SignUp)
 			}	
 		}
 	}

@@ -14,15 +14,17 @@ import (
 
 )
 
-var conf settings.Config = settings.GetEnv()
-
 const (
 	expiredAccessToken = 24
 	expiredFreshToken = 48
 )
 
-func JwtGenerateToken(email string, firstName string, lastName string, uid string) (signedToken string, signedRefreshToken string, err error)  {
-	accessClaims := &models.SignedDetails{
+
+func JwtGenerateToken(email string, firstName string, lastName string, uid string) (token models.Token, err error)  {
+	/*
+		function make jwt token. need to encrypt jwt in future
+	*/
+	accessClaims := &models.SignedDetails {
 		Email:      email,
 		FirstName: firstName,
 		LastName:  lastName,
@@ -38,13 +40,13 @@ func JwtGenerateToken(email string, firstName string, lastName string, uid strin
 		},
 	}
 
-	accessToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, accessClaims).SignedString([]byte(conf.Project.SecretKey))
-	refreshToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims).SignedString([]byte(conf.Project.SecretKey))
-
-	if err != nil {
-		log.Panic(err)
-		return
+	accessToken, aErr := jwt.NewWithClaims(jwt.SigningMethodHS256, accessClaims).SignedString([]byte(settings.Env.Project.SecretKey))
+	freshToken, fErr := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims).SignedString([]byte(settings.Env.Project.SecretKey))
+	if (aErr != nil || fErr != nil) {
+		log.Panic(aErr)
+		return token, nil
 	}
-
-	return accessToken, refreshToken, err
+	token.AccessToken = accessToken
+	token.FreshToken = freshToken
+	return token, nil
 }
