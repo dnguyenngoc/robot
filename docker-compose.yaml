@@ -16,15 +16,15 @@ services:
     command: sh -c "./main"
     networks: *robot-net
 
-  frontend-robot:
-    build:
-      context: ./client/
-      dockerfile: Dockerfile
-    container_name: fe-react
-    restart: always
-    ports: *golang-port
-    command: sh -c "npm start"
-    networks: *robot-net
+  # frontend-robot:
+  #   build:
+  #     context: ./client/
+  #     dockerfile: Dockerfile
+  #   container_name: fe-react
+  #   restart: always
+  #   ports: *golang-port
+  #   command: sh -c "npm start"
+  #   networks: *robot-net
 
 networks: 
   robotnet:

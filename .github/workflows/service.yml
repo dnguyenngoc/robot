@@ -1,4 +1,4 @@
-name: STAGING
+name: STAGING SERVICE
 on:
   push:
     tags:
