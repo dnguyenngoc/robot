@@ -2,14 +2,14 @@ name: STAGING
 on:
   push:
     tags:
-    - 'golang:v*.*.*'
+    - 'v*.*.*'
     branches:
-    - main
+    - golang
   pull_request:
     tags:
-    - 'react:v*.*.*'
+    - 'v*.*.*'
     branches:
-    - main
+    - golang
 env:
   # Variable name
   PROJECT_NAME: robot
@@ -36,9 +36,9 @@ jobs:
     # [Step-3] buid and tag image from Dockerfile
     - name: Build and tag the image
       run: |
-        docker build -t $FRONTEND_BASE -t $DOCKERHUB_USERNAME/$PROJECT_NAME:$GIT_TAG_NAME ./services/
+        docker build -t $FRONTEND_BASE -t $DOCKERHUB_USERNAME/$PROJECT_NAME/golang:$GIT_TAG_NAME ./services/
     
     # [Step-4] Push image to docker hub
     - name: Push image to DockerHub
       run: |
-        docker push $DOCKERHUB_USERNAME/$PROJECT_NAME:$GIT_TAG_NAME
+        docker push $DOCKERHUB_USERNAME/$PROJECT_NAME/golang:$GIT_TAG_NAME
