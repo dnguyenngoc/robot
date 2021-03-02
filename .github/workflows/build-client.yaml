@@ -26,7 +26,7 @@ jobs:
     # [Step-3] buid and tag image from Dockerfile
     - name: Build and tag the image
       run: |
-        docker build -t react -t $DOCKERHUB_USERNAME/robot-react:latest ./service/
+        docker build -t react -t $DOCKERHUB_USERNAME/robot-react:latest ./client/
     
     # [Step-4] Push image to docker hub
     - name: Push image to DockerHub
