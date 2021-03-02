@@ -32,9 +32,9 @@ jobs:
     # [Step-3] buid and tag image from Dockerfile
     - name: Build and tag the image
       run: |
-        docker build -t golang -t $DOCKERHUB_USERNAME/$PROJECT_NAME/golang:latest ./service/
+        docker build -t golang -t $DOCKERHUB_USERNAME/robot-golang:latest ./service/
     
     # [Step-4] Push image to docker hub
     - name: Push image to DockerHub
       run: |
-        docker push $DOCKERHUB_USERNAME/$PROJECT_NAME/golang:latest
+        docker push $DOCKERHUB_USERNAME/robot-golang:latest
