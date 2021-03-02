@@ -1,6 +1,3 @@
-x-golang-env: &golang-env
-  - backend.env
-
 x-golang-port: &golang-port
   - "8080:8000"
 
@@ -11,13 +8,22 @@ version: '3.8'
 services:
   backend-robot:
     build:
-      context: .
+      context: ./service/
       dockerfile: Dockerfile
-    container_name: golang
+    container_name: be-golang
     restart: always
-    env_file: *golang-env
     ports: *golang-port
     command: sh -c "./main"
+    networks: *robot-net
+
+  frontend-robot:
+    build:
+      context: ./client/
+      dockerfile: Dockerfile
+    container_name: fe-react
+    restart: always
+    ports: *golang-port
+    command: sh -c "npm start"
     networks: *robot-net
 
 networks: 
