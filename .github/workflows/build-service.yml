@@ -1,15 +1,9 @@
 name: STAGING
 on:
   push:
-    branches:
-    - golang
-  pull_request:
-    branches:
-    - golang
+    tags:
+    - 'service-v*.*.*'
 env:
-  # Variable name
-  PROJECT_NAME: robot
-
   # dockerhub container
   DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
