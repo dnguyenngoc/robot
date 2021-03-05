@@ -1,0 +1,44 @@
+.loading{
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+
+    margin: auto;
+    position: absolute;
+    top: 0; 
+    left: 0; 
+    right: 0;
+    bottom: 0;
+
+    overflow: hidden;
+    color: white;
+    background-image: linear-gradient(#bb8d7b,#6f96bb);
+    display: grid;
+    .bar__loader{
+        position: absolute;
+        top: 47.5%;
+        right: 48.8%;
+        text-align: center;
+    }
+    .loader {
+        position: absolute;
+        top: 40%;
+        right: 49.1%;
+        border: 13px solid #f3f3f3;
+        border-top: 13px solid rgb(110, 103, 168);
+        border-bottom: 13px solid rgb(30, 115, 185);
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        -webkit-animation: spin 2s linear infinite; /* Safari */
+        animation: spin 2s linear infinite;
+    }
+    /* Safari */
+    @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+}
