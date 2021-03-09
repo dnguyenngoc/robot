@@ -1,26 +1,20 @@
-import {urlLoginAccessToken, urlSignup} from './UrlServices';
+import Axios from 'axios'
 
 
-export const userService = {
-    loginAccessToken,
-    logout,
-    signup,
-    getById,
-    update,
-    delete: _delete 
-};
-
+export const userServiceLoginAccessToken = (username, password)=>{
+    loginAccessToken(username, password);
+}
 
 async function loginAccessToken(username, password) {
     const requestOptions = {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'}
+        headers: {'Content-Type': 'application/json',}
     };
     try {
         const response = await Axios.post(
-            urlLoginAccessToken(), 
+            "http://localhost:8080/api/v1/accounts/login/access-token", 
             requestOptions, 
-            { email: username, password: password, verifyPassword: verifyPassword }
+            {"email": username, "password": password }
         );
         return response.data;
     }catch (error) {
@@ -30,38 +24,38 @@ async function loginAccessToken(username, password) {
 }
 
 
-async function signup(username, password, verifyPassword) {
-    const requestOptions = {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'}
-    };
-    try {
-        const response = await Axios.post(
-            urlSignup(),
-            requestOptions, 
-            { email: username, password: password, verifyPassword: verifyPassword }
-        );
-        return response.data;
-    }catch (error) {
-        console.error('Error', error.response);
-        return false
-    }
-}
+// async function signup(username, password, verifyPassword) {
+//     const requestOptions = {
+//         method: 'POST',
+//         headers: {'Content-Type': 'application/json'}
+//     };
+//     try {
+//         const response = await Axios.post(
+//             urlServiceSignup(),
+//             requestOptions, 
+//             { email: username, password: password, verifyPassword: verifyPassword }
+//         );
+//         return response.data;
+//     }catch (error) {
+//         console.error('Error', error.response);
+//         return false
+//     }
+// }
 
 
 
-function logout() {
-}
+// function logout() {
+// }
 
-function getById(id) {
+// function getById(id) {
     
-}
+// }
 
-async function update(id, params) {
+// async function update(id, params) {
    
-}
+// }
 
-async function _delete(id) {
+// async function _delete(id) {
    
-}
+// }
 

@@ -1,7 +1,7 @@
 // Config webpack stop load file type
 
 const HTMLWebPackPlugin = require('html-webpack-plugin');
-module.exports = {  
+module.exports = { 
   module:{
     rules:[
       {
